@@ -15,6 +15,7 @@ namespace Mp3_Sorter
         string loadedFolderPath;
         List<string> audioFilePaths;
         FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+        string[] illegalChars = { "*", ".", "\"", "/", "\\", ":", ";", "|", "<", ">", "?", "[", "]", "'", "+" };
 
         public mainFrm()
         {
@@ -45,8 +46,15 @@ namespace Mp3_Sorter
                 for (int i=0; i < audioFilePaths.Count; i++)
                 {
                     File musicFile = File.Create(audioFilePaths[i]);
-                    string newFileDir = sortedFilesDestination + @"\" + musicFile.Tag.FirstPerformer + @"\" + musicFile.Tag.Album;
-                    if(!System.IO.Directory.Exists(newFileDir))
+                    string firstPerformer = musicFile.Tag.FirstPerformer;
+                    string album = musicFile.Tag.Album;
+                    foreach (var c in illegalChars)
+                    {
+                        firstPerformer = firstPerformer.Replace(c, string.Empty);
+                        album = album.Replace(c, string.Empty);
+                    }
+                    string newFileDir = sortedFilesDestination + @"\" + firstPerformer + @"\" + album;
+                    if (!System.IO.Directory.Exists(newFileDir))
                     {
                         System.IO.Directory.CreateDirectory(newFileDir);
                     }
